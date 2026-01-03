@@ -1,0 +1,31 @@
+[project]
+name = "tinygpt"
+version = "0.1.0"
+description = "A minimal implementation of GPT architecture with tinygrad"
+readme = "README.md"
+authors = [
+    { name = "Clement Verrier", email = "17490658+cverrier@users.noreply.github.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "tinygrad",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.21,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+target-version = "py314"
+line-length = 120
+indent-width = 2
+
+[tool.uv.sources]
+tinygrad = { git = "https://github.com/tinygrad/tinygrad.git", rev = "526fd4ec7104eda1ef8114e64d99b2788910a8fd" }
+
+[dependency-groups]
+dev = [
+    "mypy>=1.19.1",
+    "pre-commit>=4.5.1",
+    "ruff>=0.14.10",
+]
