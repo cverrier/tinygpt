@@ -1,4 +1,4 @@
-from tinygrad import Tensor, dtypes
+from tinygrad import Tensor, TinyJit, dtypes, nn
 
 from tinygpt.gpt2 import GPT2
 from tinygpt.utils import get_batch
@@ -26,11 +26,36 @@ assert text == decode_text(encoded := encode_text(text))
 data_train = Tensor(encoded[:612857], dtype=dtypes.int)
 data_val = Tensor(encoded[612857:], dtype=dtypes.int)
 
-bs, seq_len = 4, 6
-x, y = get_batch(data_train, bs, seq_len)
 
 max_seq_len = 8
 model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=32, head_size=16)
-logits = model(x)
-print("voc_size:", voc_size)
-print("logits shape:", logits.shape)
+opt = nn.optim.AdamW(nn.state.get_parameters(model))
+
+
+bs, seq_len = 4, 6
+
+
+@TinyJit
+@Tensor.train()
+def train_step() -> Tensor:
+  X, Y = get_batch(data_train, bs, seq_len)
+  opt.zero_grad()
+  loss = model(X).sparse_categorical_crossentropy(Y).backward()
+  return loss.realize(*opt.schedule_step())
+
+
+for i in range(10000):
+  # GlobalCounters.reset()  # NOTE: this makes it nice for DEBUG=2 timing
+  loss = train_step()
+  if i % 100 == 0:
+    print(f"Step {i:3d} loss: {loss.item():6.2f}")
+  # if i % 10 == 0:
+  #   test_acc = get_test_acc().item()
+  # t.set_description(f"loss: {loss.item():6.2f} test_accuracy: {test_acc:5.2f}%")
+
+
+# x, y = get_batch(data_train, bs, seq_len)
+#
+# logits = model(x)
+# print("voc_size:", voc_size)
+# print("logits shape:", logits.shape)
