@@ -8,6 +8,7 @@ authors = [
 ]
 requires-python = ">=3.14"
 dependencies = [
+    "numpy>=2.4.0",
     "tinygrad",
 ]
 
@@ -17,7 +18,7 @@ build-backend = "uv_build"
 
 [tool.ruff]
 target-version = "py314"
-line-length = 120
+line-length = 150
 indent-width = 2
 
 [tool.uv.sources]
@@ -25,7 +26,13 @@ tinygrad = { git = "https://github.com/tinygrad/tinygrad.git", rev = "526fd4ec71
 
 [dependency-groups]
 dev = [
+    "jupyterlab>=4.5.1",
+    "jupyterlab-vim>=4.1.4",
     "mypy>=1.19.1",
     "pre-commit>=4.5.1",
+    "pytest>=9.0.2",
     "ruff>=0.14.10",
 ]
+
+[pytest]
+addopts = ["--import-mode=importlib"]
