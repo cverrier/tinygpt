@@ -32,7 +32,7 @@ model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=32, head_size=
 opt = nn.optim.AdamW(nn.state.get_parameters(model))
 
 
-bs, seq_len = 4, 6
+bs, seq_len = 32, 6
 
 
 @TinyJit
@@ -44,18 +44,28 @@ def train_step() -> Tensor:
   return loss.realize(*opt.schedule_step())
 
 
-for i in range(10000):
-  # GlobalCounters.reset()  # NOTE: this makes it nice for DEBUG=2 timing
+@TinyJit
+@Tensor.train(False)
+def estimate_train_loss(batch_size: int) -> Tensor:
+  X, Y = get_batch(data_train, batch_size, seq_len)
+  loss = model(X).sparse_categorical_crossentropy(Y)
+  return loss.realize()
+
+
+@TinyJit
+@Tensor.train(False)
+def estimate_val_loss(batch_size: int) -> Tensor:
+  X, Y = get_batch(data_val, batch_size, seq_len)
+  loss = model(X).sparse_categorical_crossentropy(Y)
+  return loss.realize()
+
+
+n_iters = 10000
+eval_bs = 8 * bs
+for i in range(n_iters):
   loss = train_step()
   if i % 100 == 0:
     print(f"Step {i:3d} loss: {loss.item():6.2f}")
-  # if i % 10 == 0:
-  #   test_acc = get_test_acc().item()
-  # t.set_description(f"loss: {loss.item():6.2f} test_accuracy: {test_acc:5.2f}%")
-
-
-# x, y = get_batch(data_train, bs, seq_len)
-#
-# logits = model(x)
-# print("voc_size:", voc_size)
-# print("logits shape:", logits.shape)
+    estim_train_loss = estimate_train_loss(eval_bs)
+    estim_val_loss = estimate_val_loss(eval_bs)
+    print(f"  train loss: {estim_train_loss.item():6.2f}, val loss: {estim_val_loss.item():6.2f}")
