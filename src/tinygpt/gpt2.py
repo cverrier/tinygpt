@@ -1,7 +1,7 @@
 from collections.abc import Callable
 
 from tinygrad import Tensor
-from tinygrad.nn import Embedding, Linear
+from tinygrad.nn import Embedding, LayerNorm, Linear
 
 from .transformer_block import TransformerBlock
 
@@ -14,7 +14,8 @@ class GPT2:
       TransformerBlock(n_heads, head_size, emb_size, max_seq_len),
       TransformerBlock(n_heads, head_size, attn_out := n_heads * head_size, max_seq_len),
       TransformerBlock(n_heads, head_size, attn_out, max_seq_len),
-      Linear(attn_out, voc_size),
+      LayerNorm(emb_size),
+      Linear(emb_size, voc_size),
     ]
     self.max_seq_len = max_seq_len
 
