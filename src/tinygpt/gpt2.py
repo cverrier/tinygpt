@@ -1,3 +1,5 @@
+from collections.abc import Callable
+
 from tinygrad import Tensor
 from tinygrad.nn import Embedding, Linear
 
@@ -9,7 +11,8 @@ class GPT2:
     self.tok_emb = Embedding(voc_size, emb_size)
     self.tok_pos_emb = Embedding(max_seq_len, emb_size)
     self.attn_heads = MultiAttentionHead(n_heads, emb_size, head_size, max_seq_len)
-    self.lin = Linear(n_heads * head_size, voc_size)
+    self.ffwd: list[Callable[[Tensor], Tensor]] = [Linear(attn_out := n_heads * head_size, attn_out), Tensor.relu]
+    self.lin = Linear(attn_out, voc_size)
     self.max_seq_len = max_seq_len
 
   def __call__(self, x: Tensor) -> Tensor:
@@ -22,4 +25,4 @@ class GPT2:
     """
     bs, seq_len = x.shape
     assert seq_len <= self.max_seq_len, "Sequence length exceeds maximum"
-    return self.lin(self.attn_heads(self.tok_emb(x) + self.tok_pos_emb(Tensor.arange(seq_len))))
+    return self.lin(self.attn_heads(self.tok_emb(x) + self.tok_pos_emb(Tensor.arange(seq_len))).sequential(self.ffwd))
