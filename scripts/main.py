@@ -1,5 +1,6 @@
 from tinygrad import Tensor, TinyJit, dtypes, nn
 
+from tinygpt.generate import generate
 from tinygpt.gpt2 import GPT2
 from tinygpt.utils import get_batch
 
@@ -60,6 +61,12 @@ def estimate_val_loss(batch_size: int) -> Tensor:
   return loss.realize()
 
 
+print("*****")
+print("Token generation before training")
+toks = [33]
+generate(model, toks, max_new_tokens=100)
+print(decode_text(toks))
+
 n_iters = 10000
 eval_bs = 8 * bs
 for i in range(n_iters):
@@ -69,3 +76,9 @@ for i in range(n_iters):
     estim_train_loss = estimate_train_loss(eval_bs)
     estim_val_loss = estimate_val_loss(eval_bs)
     print(f"  train loss: {estim_train_loss.item():6.2f}, val loss: {estim_val_loss.item():6.2f}")
+
+print("*****")
+print("Token generation after training")
+toks = [33]
+generate(model, toks, max_new_tokens=100)
+print(decode_text(toks))
