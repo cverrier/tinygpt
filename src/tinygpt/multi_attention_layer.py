@@ -4,6 +4,9 @@ from .attention_head import AttentionHead
 
 
 class MultiAttentionLayer:
+  # NOTE: Karpathy seems to compute head_size from emb_size and n_head, so that everything matches
+  # nicely when stacking several transformer blocks sequentially. Here, I do something a bit more
+  # general by allowing the user to set the desired head_size.
   def __init__(self, n_heads: int, head_size: int, emb_size: int, max_seq_len: int) -> None:
     self.heads = [AttentionHead(emb_size, head_size, max_seq_len) for _ in range(n_heads)]
     self.max_seq_len = max_seq_len
