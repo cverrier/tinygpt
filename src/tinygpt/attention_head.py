@@ -10,6 +10,13 @@ class AttentionHead:
     self.tri_mask = Tensor.ones(max_seq_len, max_seq_len, dtype=dtypes.bool).tril().logical_not().requires_grad_(False)
 
   def __call__(self, x: Tensor) -> Tensor:
+    """Return the attention head output.
+
+    Args:
+      x: Tensor of shape (bs, seq_len, emb_size).
+    Returns:
+      Tensor of shape (bs, seq_len, head_size).
+    """
     _, seq_len, emb_size = x.shape
     assert seq_len <= self.tri_mask.shape[0], "Sequence length exceeds maximum"
     k, q = self.key(x), self.query(x)
