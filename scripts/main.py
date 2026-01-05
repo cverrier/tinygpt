@@ -29,7 +29,10 @@ data_val = Tensor(encoded[612857:], dtype=dtypes.int)
 
 
 max_seq_len = 8
-model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=32, n_heads=4, head_size=4)
+emb_size = 32
+n_heads = 4
+head_size = emb_size // n_heads
+model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=emb_size, n_heads=n_heads, head_size=head_size)
 opt = nn.optim.AdamW(nn.state.get_parameters(model))
 
 
