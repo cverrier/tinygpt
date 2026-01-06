@@ -32,7 +32,8 @@ max_seq_len = 8
 emb_size = 32
 n_heads = 4
 head_size = emb_size // n_heads
-model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=emb_size, n_heads=n_heads, head_size=head_size)
+dropout_rate = 0.2
+model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=emb_size, n_heads=n_heads, head_size=head_size, dropout_rate=dropout_rate)
 opt = nn.optim.AdamW(nn.state.get_parameters(model))
 
 
