@@ -4,6 +4,8 @@ A minimal implementation of GPT architecture with [tinygrad](https://github.com/
 
 This project is just for experimenting with tinygrad, and is not polished at all (and, very likely, might not be polished in the future).
 
+Regarding the training data, you can put whatever text file you want in a `data/` folder, and update the filename in `scripts/main.py`.
+
 If you want to run a simple experiment, make sure you have [uv](https://github.com/astral-sh/uv) installed, then run:
 ```bash
 uv sync && uv run scripts/main.py
