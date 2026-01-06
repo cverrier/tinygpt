@@ -34,5 +34,5 @@ dev = [
     "ruff>=0.14.10",
 ]
 
-[pytest]
+[tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
