@@ -28,18 +28,18 @@ data_train = Tensor(encoded[:612857], dtype=dtypes.int)
 data_val = Tensor(encoded[612857:], dtype=dtypes.int)
 
 
-max_seq_len = 256
-emb_size = 384
-n_heads = 6
+max_seq_len = 8  # 256
+emb_size = 32  # 384
+n_heads = 4
 head_size = emb_size // n_heads
-n_blocks = 6
+n_blocks = 3
 dropout_rate = 0.2
 model = GPT2(
   voc_size=voc_size, max_seq_len=max_seq_len, emb_size=emb_size, n_blocks=n_blocks, n_heads=n_heads, head_size=head_size, dropout_rate=dropout_rate
 )
-lr = 3e-4
+lr = 1e-3  # 3e-4
 opt = nn.optim.AdamW(nn.state.get_parameters(model), lr=lr)
-bs, seq_len = 64, max_seq_len
+bs, seq_len = 8, max_seq_len
 
 
 @TinyJit
@@ -70,7 +70,7 @@ def estimate_val_loss(batch_size: int) -> Tensor:
 print("*****")
 print("Token generation before training")
 toks = [33]
-generate(model, toks, max_new_tokens=100)
+generate(model, toks, max_new_tokens=25)
 print(decode_text(toks))
 
 n_iters = 10000
@@ -86,5 +86,5 @@ for i in range(n_iters):
 print("*****")
 print("Token generation after training")
 toks = [33]
-generate(model, toks, max_new_tokens=100)
+generate(model, toks, max_new_tokens=25)
 print(decode_text(toks))
