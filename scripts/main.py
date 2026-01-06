@@ -28,16 +28,18 @@ data_train = Tensor(encoded[:612857], dtype=dtypes.int)
 data_val = Tensor(encoded[612857:], dtype=dtypes.int)
 
 
-max_seq_len = 8
-emb_size = 32
-n_heads = 4
+max_seq_len = 256
+emb_size = 384
+n_heads = 6
 head_size = emb_size // n_heads
+n_blocks = 6
 dropout_rate = 0.2
-model = GPT2(voc_size=voc_size, max_seq_len=max_seq_len, emb_size=emb_size, n_heads=n_heads, head_size=head_size, dropout_rate=dropout_rate)
-opt = nn.optim.AdamW(nn.state.get_parameters(model))
-
-
-bs, seq_len = 32, 6
+model = GPT2(
+  voc_size=voc_size, max_seq_len=max_seq_len, emb_size=emb_size, n_blocks=6, n_heads=n_heads, head_size=head_size, dropout_rate=dropout_rate
+)
+lr = 3e-4
+opt = nn.optim.AdamW(nn.state.get_parameters(model), lr=lr)
+bs, seq_len = 64, max_seq_len
 
 
 @TinyJit

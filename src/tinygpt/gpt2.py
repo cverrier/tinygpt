@@ -7,16 +7,19 @@ from .transformer_block import TransformerBlock
 
 
 class GPT2:
-  def __init__(self, voc_size: int, max_seq_len: int, emb_size: int, n_heads: int, head_size: int, dropout_rate: float = 0.2) -> None:
+  def __init__(self, voc_size: int, max_seq_len: int, emb_size: int, n_blocks: int, n_heads: int, head_size: int, dropout_rate: float = 0.2) -> None:
     self.tok_emb = Embedding(voc_size, emb_size)
     self.tok_pos_emb = Embedding(max_seq_len, emb_size)
-    self.layers: list[Callable[[Tensor], Tensor]] = [
-      TransformerBlock(n_heads, head_size, emb_size, max_seq_len, dropout_rate),
-      TransformerBlock(n_heads, head_size, attn_out := n_heads * head_size, max_seq_len, dropout_rate),
-      TransformerBlock(n_heads, head_size, attn_out, max_seq_len, dropout_rate),
-      LayerNorm(emb_size),
-      Linear(emb_size, voc_size),
-    ]
+    self.layers: list[Callable[[Tensor], Tensor]] = (
+      [
+        TransformerBlock(n_heads, head_size, emb_size, max_seq_len, dropout_rate),
+      ]
+      + [TransformerBlock(n_heads, head_size, n_heads * head_size, max_seq_len, dropout_rate) for _ in range(n_blocks - 1)]
+      + [
+        LayerNorm(emb_size),
+        Linear(emb_size, voc_size),
+      ]
+    )
     self.max_seq_len = max_seq_len
 
   def __call__(self, x: Tensor) -> Tensor:
