@@ -1,6 +1,6 @@
 # tinygpt
 
-A minimal implementation of GPT architecture with tinygrad, trained on [The Silmarillion](https://grokipedia.com/page/The_Silmarillion), written by [J. R. R. Tolkien](https://grokipedia.com/page/J._R._R._Tolkien).
+A minimal implementation of GPT architecture with [tinygrad](https://github.com/tinygrad/tinygrad), trained on [The Silmarillion](https://grokipedia.com/page/The_Silmarillion), written by [J. R. R. Tolkien](https://grokipedia.com/page/J._R._R._Tolkien).
 
 This project is just for experimenting with tinygrad, and is not polished at all (and, very likely, might not be polished in the future).
 
