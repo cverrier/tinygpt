@@ -21,6 +21,6 @@ class AttentionHead:
     _, seq_len, emb_size = x.shape
     assert seq_len <= self.tri_mask.shape[0], "Sequence length exceeds maximum"
     k, q = self.key(x), self.query(x)
-    return (q @ k.transpose(-2, -1) * emb_size**-0.5).masked_fill(self.tri_mask[:seq_len, :seq_len], float("-inf")).softmax(axis=-1).dropout(
+    return (q @ k.transpose(-2, -1) * k.shape[-1] ** -0.5).masked_fill(self.tri_mask[:seq_len, :seq_len], float("-inf")).softmax(axis=-1).dropout(
       self.dropout_rate
     ) @ self.value(x)
