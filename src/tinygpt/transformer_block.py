@@ -10,7 +10,7 @@ class TransformerBlock:
   def __init__(self, n_heads: int, head_size: int, emb_size: int, max_seq_len: int, dropout_rate: float = 0.2):
     self.norm_mal_proj: list[Callable[[Tensor], Tensor]] = [
       LayerNorm(emb_size),
-      MultiAttentionLayer(n_heads, head_size, emb_size, max_seq_len),
+      MultiAttentionLayer(n_heads, head_size, emb_size, max_seq_len, dropout_rate),
       Linear(n_heads * head_size, emb_size),
       lambda x: x.dropout(dropout_rate),
     ]
