@@ -19,7 +19,7 @@ class BatchedMultiAttentionLayer:
     Returns:
       Tensor of shape (bs, seq_len, n_heads * head_size).
     """
-    bs, seq_len, emb_size = x.shape
+    bs, seq_len, _ = x.shape
     assert seq_len <= self.max_seq_len, "Sequence length exceeds maximum"
 
     # Project to (bs, seq_len, 3 * n_heads * head_size) and split into q, k, v
